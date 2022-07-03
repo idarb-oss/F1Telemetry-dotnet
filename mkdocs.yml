@@ -4,7 +4,7 @@ repo_name: idarb-oss/F1Telemetry-dotnet
 repo_url: https://github.com/idarb-oss/F1Telemetry-dotnet
 
 nav:
-  - Home: 'index.md'
+  - Home: 'README.md'
 
 theme:
   name: material
@@ -15,8 +15,9 @@ theme:
   font:
     code: Roboto Mono
   language: en
+  logo: img/f1.svg
+  favicon: img/f1.svg
   icon:
-    logo: fontawesome/solid/paragraph
     repo: fontawesome/brands/github-alt
   features:
     - navigation.tabs

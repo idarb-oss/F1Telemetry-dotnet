@@ -34,36 +34,6 @@
   </p>
 </div>
 
-
-
-<!-- TABLE OF CONTENTS -->
-<details>
-  <summary>Table of Contents</summary>
-  <ol>
-    <li>
-      <a href="#about-the-project">About The Project</a>
-      <ul>
-        <li><a href="#built-with">Built With</a></li>
-      </ul>
-    </li>
-    <!--<li>
-      <a href="#getting-started">Getting Started</a>
-      <ul>
-        <li><a href="#prerequisites">Prerequisites</a></li>
-        <li><a href="#installation">Installation</a></li>
-      </ul>
-    </li>-->
-    <!--<li><a href="#usage">Usage</a></li>-->
-    <!--<li><a href="#roadmap">Roadmap</a></li>-->
-    <!--<li><a href="#contributing">Contributing</a></li>-->
-    <li><a href="#license">License</a></li>
-    <!--<li><a href="#contact">Contact</a></li>-->
-    <!--<li><a href="#acknowledgments">Acknowledgments</a></li>-->
-  </ol>
-</details>
-
-
-
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
@@ -72,15 +42,10 @@
 F1Telemetry is an implementation for collecting telemetry data output from the F1 22 Game. This implementation will follow the 
 specification found at the EA [forum](https://answers.ea.com/t5/General-Discussion/F1-22-UDP-Specification/m-p/11551274#M2321).
 
-<p align="right">(<a href="#top">back to top</a>)</p>
-
-
 
 ### Built With
 
 * [.NET](https://dotnet.microsoft.com/)
-
-<p align="right">(<a href="#top">back to top</a>)</p>
 
 
 <!-- GETTING STARTED
@@ -163,9 +128,7 @@ Don't forget to give the project a star! Thanks again!
 <!-- LICENSE -->
 ## License
 
-Distributed under the MIT License. See `LICENSE` for more information.
-
-<p align="right">(<a href="#top">back to top</a>)</p>
+Distributed under the MIT License. See [`LICENSE`](https://github.com/idarb-oss/F1Telemetry-dotnet/blob/main/LICENSE) for more information.
 
 
 
@@ -202,7 +165,7 @@ Project Link: [https://github.com/idarb-oss/F1Telemetry-dotnet](https://github.c
 [issues-shield]: https://img.shields.io/github/issues/idarb-oss/alinea-tenant.svg?style=for-the-badge
 [issues-url]: https://github.com/idarb-oss/F1Telemetry-dotnet/issues
 [license-shield]: https://img.shields.io/github/license/idarb-oss/alinea-tenant.svg?style=for-the-badge
-[license-url]: https://github.com/idarb-oss/F1Telemetry-dotnet/blob/master/LICENSE
+[license-url]: https://github.com/idarb-oss/F1Telemetry-dotnet/blob/main/LICENSE
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [linkedin-url]: https://linkedin.com/in/linkedin_username
 [product-screenshot]: images/screenshot.png
