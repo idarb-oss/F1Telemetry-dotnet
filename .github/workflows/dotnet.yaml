@@ -1,0 +1,133 @@
+name: dotnet
+
+on:
+  push:
+    branches:
+      - '**'
+
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
+
+    branches:
+      - main
+
+  release:
+    types:
+      - published
+
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        dotnet: [ '6.0.x' ]
+
+    outputs:
+      version: "${{ steps.version.outputs.majorMinorPatch }}"
+      commitsSinceVersion: "${{ steps.version.outputs.commitsSinceVersionSourcePadded }}"
+      sha: "sha.${{ steps.version.outputs.sha }}"
+
+    name: Test dotnet ${{ matrix.dotnet }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Setup dotnet
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: ${{ matrix.dotnet }}
+
+      - name: Install GitVersion
+        uses: gittools/actions/gitversion/setup@v0.9.7
+        with:
+          versionSpec: '5.x'
+
+      - name: Get Version
+        id: version
+        uses: gittools/actions/gitversion/execute@v0.9.7
+        with:
+          useConfigFile: true
+
+      - name: Restore
+        run: dotnet restore
+
+      - name: Build
+        run: dotnet build --no-restore --configuration Release
+
+      - name: Test
+        run: dotnet test --no-restore --verbosity normal /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
+
+      - name: Upload Coverage to Codecov;
+        uses: codecov/codecov-action@v2
+
+  release:
+    runs-on: ubuntu-latest
+    if: |
+      github.event_name == 'release' &&
+      !github.event.release.prerelease
+
+    needs:
+      - test
+
+    strategy:
+      matrix:
+        dotnet: [ '6.0.x' ]
+
+    name: Release
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: ${{ matrix.dotnet }}
+
+      - name: Build
+        run: dotnet build -c Release /p:VersionPrefix=${{ needs.test.outputs.version }} /p:InformationalVersion=${{ needs.test.outputs.version }}-${{ needs.test.outputs.sha }}
+
+      - name: Create nuget
+        run: dotnet pack -c Release -o dist /p:PackageVersion=${{ needs.test.outputs.version }}
+
+      - name: Publish
+        run: dotnet nuget push "dist/*.nupkg" -s https://api.nuget.org/v3/index.json --api-key ${{ secrets.NUGET_API_KEY }}
+
+  pre-release:
+    runs-on: ubuntu-latest
+    if: |
+      github.event_name == 'release' &&
+      github.event.release.prerelease
+
+    needs:
+      - test
+
+    strategy:
+      matrix:
+        dotnet: [ '6.0.x' ]
+
+    name: Pre-Release
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: ${{ matrix.dotnet }}
+
+      - name: Build
+        run: dotnet build -c Release /p:VersionPrefix=${{ needs.test.outputs.version }} /p:VersionSuffix="preview" /p:InformationalVersion=${{ needs.test.outputs.version }}-preview.${{ needs.test.outputs.sha }}
+
+      - name: Create nuget
+        run: dotnet pack -c Release -o dist /p:PackageVersion=${{ needs.test.outputs.version }}-preview${{ needs.test.outputs.CommitsSinceVersionSourcePadded }}
+
+      - name: Publish
+        run: dotnet nuget push "dist/*.nupkg" -s https://api.nuget.org/v3/index.json --api-key ${{ secrets.NUGET_API_KEY }}
