@@ -21,8 +21,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\src\F1Telemetry.Abstractions\F1Telemetry.Abstractions.csproj" />
-      <ProjectReference Include="..\..\src\F1Telemetry.Data\F1Telemetry.Data.csproj" />
+      <ProjectReference Include="..\..\src\F1Telemetry.Core\F1Telemetry.Core.csproj" />
     </ItemGroup>
 
 </Project>

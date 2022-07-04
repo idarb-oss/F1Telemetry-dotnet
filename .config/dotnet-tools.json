@@ -7,6 +7,12 @@
       "commands": [
         "dotnet-gitversion"
       ]
+    },
+    "xmldoc2markdown": {
+      "version": "3.0.0",
+      "commands": [
+        "xmldoc2md"
+      ]
     }
   }
 }

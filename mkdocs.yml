@@ -5,6 +5,11 @@ repo_url: https://github.com/idarb-oss/F1Telemetry-dotnet
 
 nav:
   - Home: 'README.md'
+  - Library:
+      - Overview: 'api/index.md'
+  - Specification:
+    - Overview: 'spec/overview.md'
+    - "F1 2022": 'spec/f122.md'
 
 theme:
   name: material
