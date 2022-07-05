@@ -297,25 +297,32 @@ public static class MotionDataExtensions
     /// <returns></returns>
     public static PacketMotionData GetPacketMotionData(this BinaryReader reader, PacketHeader header)
     {
-        return new PacketMotionData
+        try
         {
-            PacketHeader = header,
-            CarMotionData = reader.GetCarMotionDataArray(),
-            SuspensionPosition = reader.GetSuspensionPos(),
-            SuspensionVelocity = reader.GetSuspensionVelocity(),
-            SuspensionAcceleration = reader.GetSuspensionAcceleration(),
-            WheelSpeed = reader.GetWheelSpeed(),
-            WheelSlip = reader.GetWheelSlip(),
-            LocalVelocityX = reader.ReadSingle(),
-            LocalVelocityY = reader.ReadSingle(),
-            LocalVelocityZ = reader.ReadSingle(),
-            AngularVelocityX = reader.ReadSingle(),
-            AngularVelocityY = reader.ReadSingle(),
-            AngularVelocityZ = reader.ReadSingle(),
-            AngularAccelerationX = reader.ReadSingle(),
-            AngularAccelerationY = reader.ReadSingle(),
-            AngularAccelerationZ = reader.ReadSingle(),
-            FrontWheelsAngle = reader.ReadSingle()
-        };
+            return new PacketMotionData
+            {
+                PacketHeader = header,
+                CarMotionData = reader.GetCarMotionDataArray(),
+                SuspensionPosition = reader.GetSuspensionPos(),
+                SuspensionVelocity = reader.GetSuspensionVelocity(),
+                SuspensionAcceleration = reader.GetSuspensionAcceleration(),
+                WheelSpeed = reader.GetWheelSpeed(),
+                WheelSlip = reader.GetWheelSlip(),
+                LocalVelocityX = reader.ReadSingle(),
+                LocalVelocityY = reader.ReadSingle(),
+                LocalVelocityZ = reader.ReadSingle(),
+                AngularVelocityX = reader.ReadSingle(),
+                AngularVelocityY = reader.ReadSingle(),
+                AngularVelocityZ = reader.ReadSingle(),
+                AngularAccelerationX = reader.ReadSingle(),
+                AngularAccelerationY = reader.ReadSingle(),
+                AngularAccelerationZ = reader.ReadSingle(),
+                FrontWheelsAngle = reader.ReadSingle()
+            };
+        }
+        catch (Exception ex)
+        {
+            throw new Exception("Could not parse motion data", ex);
+        }
     }
 }

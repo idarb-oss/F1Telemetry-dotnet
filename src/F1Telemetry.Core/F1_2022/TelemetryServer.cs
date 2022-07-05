@@ -1,4 +1,7 @@
 using System.Net.Sockets;
+using System.Reactive.Disposables;
+using System.Reactive.Linq;
+using F1Telemetry.Core.Abstractions;
 using F1Telemetry.Core.F1_2022.Records;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -11,6 +14,8 @@ namespace F1Telemetry.Core.F1_2022;
 /// </summary>
 public class TelemetryServer : BackgroundService
 {
+    private readonly IPacketProcessor _processor;
+
     private readonly ILogger<TelemetryServer> _logger;
 
     private readonly UdpClient _udpClient;
@@ -18,13 +23,14 @@ public class TelemetryServer : BackgroundService
     /// <summary>
     /// Construct and background service to receive UDP data from the F1 2022 game.
     /// </summary>
-    /// <param name="mediator"></param>
     /// <param name="options"></param>
+    /// <param name="processor"></param>
     /// <param name="logger"></param>
-    public TelemetryServer(IOptions<UdpServerOptions> options, ILogger<TelemetryServer> logger)
+    public TelemetryServer(IOptions<UdpServerOptions> options, IPacketProcessor processor, ILogger<TelemetryServer> logger)
     {
+        _processor = processor;
         _logger = logger;
-        _udpClient = new(options.Value.Port);
+        _udpClient = new UdpClient(options.Value.Port);
     }
 
     /// <inheritdoc />
@@ -43,22 +49,7 @@ public class TelemetryServer : BackgroundService
             try
             {
                 var data = await _udpClient.ReceiveAsync(cts.Token);
-
-                var reader = new BinaryReader(new MemoryStream(data.Buffer));
-                var header = reader.GetPacketHeader();
-
-                _logger.LogDebug("Header: {Header}", header);
-
-                switch (header.PacketId)
-                {
-                    case (sbyte)PacketId.Motion:
-                        var motionData = reader.GetPacketMotionData(header);
-                        _logger.LogInformation("MotionData: {MotionData}", motionData);
-                        break;
-                    default:
-                        _logger.LogWarning("Can not handle data with packet id: {Id}", header.PacketId.ToString());
-                        break;
-                }
+                _processor.ProcessPacket(data.Buffer);
             }
             catch (OperationCanceledException ex)
             {
