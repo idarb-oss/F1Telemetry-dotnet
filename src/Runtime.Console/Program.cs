@@ -14,7 +14,7 @@ var host = new HostBuilder()
     .ConfigureServices(services =>
     {
         services.AddLogging();
-        services.AddHostedService<TelemetryServer>();
+        services.AddF1Telemetry();
     })
     .UseConsoleLifetime()
     .Build();

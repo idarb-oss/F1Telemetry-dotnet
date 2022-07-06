@@ -1,4 +1,4 @@
-namespace F1Telemetry.Core.F1_2022.Records;
+namespace F1Telemetry.Core.F1_2022.Packets;
 
 /// <summary>
 /// Represents the header of an F1 UDP package
@@ -51,7 +51,7 @@ public record PacketHeader()
     public sbyte PlayerCarIndex { get; init; }
 
     /// <summary>
-    /// Index of secondary player's car in the array (splitscreen).
+    /// Index of secondary player's car in the array (split screen).
     ///
     /// 255 if no second player
     /// </summary>

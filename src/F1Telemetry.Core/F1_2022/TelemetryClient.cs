@@ -1,8 +1,5 @@
 using System.Net.Sockets;
-using System.Reactive.Disposables;
-using System.Reactive.Linq;
 using F1Telemetry.Core.Abstractions;
-using F1Telemetry.Core.F1_2022.Records;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -12,11 +9,11 @@ namespace F1Telemetry.Core.F1_2022;
 /// <summary>
 /// Implement and Telemetry UDP server for the 2022 version of te F1 game
 /// </summary>
-public class TelemetryServer : BackgroundService
+public class TelemetryClient : BackgroundService
 {
     private readonly IPacketProcessor _processor;
 
-    private readonly ILogger<TelemetryServer> _logger;
+    private readonly ILogger<TelemetryClient> _logger;
 
     private readonly UdpClient _udpClient;
 
@@ -26,7 +23,7 @@ public class TelemetryServer : BackgroundService
     /// <param name="options"></param>
     /// <param name="processor"></param>
     /// <param name="logger"></param>
-    public TelemetryServer(IOptions<UdpServerOptions> options, IPacketProcessor processor, ILogger<TelemetryServer> logger)
+    public TelemetryClient(IOptions<UdpClientOptions> options, IPacketProcessor processor, ILogger<TelemetryClient> logger)
     {
         _processor = processor;
         _logger = logger;
@@ -53,7 +50,7 @@ public class TelemetryServer : BackgroundService
             }
             catch (OperationCanceledException ex)
             {
-                _logger.LogInformation("No data received for 5000ms");
+                _logger.LogInformation(ex, "No data received for 5000ms");
             }
         }
     }

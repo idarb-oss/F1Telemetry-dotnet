@@ -1,16 +1,25 @@
+using System.Reactive.Concurrency;
+using System.Reactive.Linq;
+using System.Reactive.Subjects;
 using F1Telemetry.Core.Abstractions;
-using F1Telemetry.Core.F1_2022.Records;
+using F1Telemetry.Core.F1_2022.Packets;
 using Microsoft.Extensions.Logging;
 
 namespace F1Telemetry.Core.F1_2022;
 
-public class PacketProcessor : IPacketProcessor
+public class PacketProcessor : IPacketProcessor, IPacketObservable
 {
+    private readonly Subject<IPacket> _subject;
+
+    private readonly IConnectableObservable<IPacket> _connectable;
+
     private readonly ILogger<PacketProcessor> _logger;
 
     public PacketProcessor(ILogger<PacketProcessor> logger)
     {
         _logger = logger;
+        _subject = new();
+        _connectable = _subject.ObserveOn(Scheduler.Default).Publish();
     }
 
     public void ProcessPacket(byte[] data)
@@ -49,10 +58,16 @@ public class PacketProcessor : IPacketProcessor
         try
         {
             var motionData = reader.GetPacketMotionData(header);
+            _subject.OnNext(motionData);
         }
-        catch (Exception ex)
+        catch (PacketException ex)
         {
             _logger.LogError(ex, "Handling of motion data failed");
         }
+    }
+
+    public IObservable<T> Observe<T>()
+    {
+        return _connectable.OfType<T>();
     }
 }

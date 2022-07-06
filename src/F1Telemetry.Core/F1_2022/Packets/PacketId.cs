@@ -1,4 +1,4 @@
-namespace F1Telemetry.Core.F1_2022.Records;
+namespace F1Telemetry.Core.F1_2022.Packets;
 
 /// <summary>
 /// Represents the different packet types received from F1

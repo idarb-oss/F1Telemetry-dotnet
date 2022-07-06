@@ -1,4 +1,6 @@
-namespace F1Telemetry.Core.F1_2022.Records;
+using F1Telemetry.Core.Abstractions;
+
+namespace F1Telemetry.Core.F1_2022.Packets;
 
 /// <summary>
 /// Represents the motion data for one car
@@ -99,12 +101,12 @@ public record CarMotionData()
 /// <summary>
 /// Represents the Motion Data Packet from the F1 Game
 /// </summary>
-public record PacketMotionData
+public record PacketMotionData : IPacket
 {
     /// <summary>
     /// Header Data
     /// </summary>
-    public PacketHeader PacketHeader { get; init; }
+    public PacketHeader Header { get; init; }
 
     /// <summary>
     /// Data for all cars on track
@@ -301,7 +303,7 @@ public static class MotionDataExtensions
         {
             return new PacketMotionData
             {
-                PacketHeader = header,
+                Header = header,
                 CarMotionData = reader.GetCarMotionDataArray(),
                 SuspensionPosition = reader.GetSuspensionPos(),
                 SuspensionVelocity = reader.GetSuspensionVelocity(),
@@ -322,7 +324,7 @@ public static class MotionDataExtensions
         }
         catch (Exception ex)
         {
-            throw new Exception("Could not parse motion data", ex);
+            throw new PacketException("Could not parse motion data", ex);
         }
     }
 }
