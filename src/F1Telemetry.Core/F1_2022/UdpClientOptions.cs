@@ -8,10 +8,10 @@ public record UdpClientOptions
     /// <summary>
     /// The port to listen to for data
     /// </summary>
-    public int Port { get; init; } = 2077;
+    public int Port { get; set; } = 2077;
 
     /// <summary>
     /// Wait for data for timeout
     /// </summary>
-    public int Timeout { get; init; } = 5000;
+    public int Timeout { get; set; } = 5000;
 }

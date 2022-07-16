@@ -99,12 +99,17 @@ public record CarMotionData()
 }
 
 /// <summary>
-/// Represents the Motion Data Packet from the F1 Game
+/// The motion packet gives physics data for all the cars being driven. There is additional data for the car
+/// being driven with the goal of being able to drive a motion platform setup.  N.B. For the normalised
+/// vectors below, to convert to float values divide by 32767.0f – 16-bit signed values are used to pack the
+/// data and on the assumption that direction values are always between -1.0f and 1.0f.
+///
+/// Frequency: Rate as specified in menus
 /// </summary>
 public record PacketMotionData : IPacket
 {
     /// <summary>
-    /// Header Data
+    /// The header packet arriving with the data
     /// </summary>
     public PacketHeader Header { get; init; }
 
@@ -296,7 +301,8 @@ public static class MotionDataExtensions
     /// </summary>
     /// <param name="reader"><see cref="BinaryReader"/> with the UDP packet data</param>
     /// <param name="header">The header from the received packet</param>
-    /// <returns></returns>
+    /// <returns>Returns a new <see cref="PacketMotionData"/></returns>
+    /// <exception cref="PacketException">Exception if there is an parsing error</exception>
     public static PacketMotionData GetPacketMotionData(this BinaryReader reader, PacketHeader header)
     {
         try

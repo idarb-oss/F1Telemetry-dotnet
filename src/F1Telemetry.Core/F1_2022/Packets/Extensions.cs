@@ -15,31 +15,3 @@ public static class ByteArrayExtensions
         return new BinaryReader(new MemoryStream(data));
     }
 }
-
-/// <summary>
-/// Extensions for Binary Readers
-/// </summary>
-public static class BinaryReaderExtensions
-{
-    /// <summary>
-    /// Get the header from the UDP packet
-    /// </summary>
-    /// <param name="reader"></param>
-    /// <returns></returns>
-    public static PacketHeader GetPacketHeader(this BinaryReader reader)
-    {
-        return new PacketHeader()
-        {
-            PacketFormat = reader.ReadUInt16(),
-            MajorVersion = reader.ReadSByte(),
-            MinorVersion = reader.ReadSByte(),
-            PacketVersion = reader.ReadSByte(),
-            PacketId = reader.ReadSByte(),
-            SessionUID = reader.ReadByte(),
-            SessionTime = reader.ReadSingle(),
-            FrameIdentifier = reader.ReadUInt32(),
-            PlayerCarIndex = reader.ReadSByte(),
-            SecondaryPlayerCarIndex = reader.ReadSByte()
-        };
-    }
-}

@@ -17,6 +17,8 @@ public class TelemetryClient : BackgroundService
 
     private readonly UdpClient _udpClient;
 
+    private readonly UdpClientOptions _options;
+
     /// <summary>
     /// Construct and background service to receive UDP data from the F1 2022 game.
     /// </summary>
@@ -27,7 +29,8 @@ public class TelemetryClient : BackgroundService
     {
         _processor = processor;
         _logger = logger;
-        _udpClient = new UdpClient(options.Value.Port);
+        _options = options.Value;
+        _udpClient = new UdpClient(_options.Port);
     }
 
     /// <inheritdoc />
@@ -41,7 +44,7 @@ public class TelemetryClient : BackgroundService
         while (!cancellationToken.IsCancellationRequested)
         {
             var cts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
-            cts.CancelAfter(5000);
+            cts.CancelAfter(_options.Timeout);
 
             try
             {
@@ -50,7 +53,7 @@ public class TelemetryClient : BackgroundService
             }
             catch (OperationCanceledException ex)
             {
-                _logger.LogInformation(ex, "No data received for 5000ms");
+                _logger.LogInformation(ex, "No data received for {Timeout}ms", _options.Timeout.ToString());
             }
         }
     }

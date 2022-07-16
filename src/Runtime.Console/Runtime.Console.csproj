@@ -5,6 +5,8 @@
         <TargetFramework>net6.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+
+      <Description>F1 Telemetry runtime</Description>
     </PropertyGroup>
 
     <ItemGroup>

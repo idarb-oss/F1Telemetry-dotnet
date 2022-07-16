@@ -1,4 +1,3 @@
-using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using F1Telemetry.Core.Abstractions;
@@ -7,21 +6,26 @@ using Microsoft.Extensions.Logging;
 
 namespace F1Telemetry.Core.F1_2022;
 
+/// <summary>
+/// Processor of telemetry packets that can be observed for new data
+/// </summary>
 public class PacketProcessor : IPacketProcessor, IPacketObservable
 {
     private readonly Subject<IPacket> _subject;
 
-    private readonly IConnectableObservable<IPacket> _connectable;
-
     private readonly ILogger<PacketProcessor> _logger;
 
+    /// <summary>
+    /// Construct new <see cref="PacketProcessor"/>
+    /// </summary>
+    /// <param name="logger">The logger to use</param>
     public PacketProcessor(ILogger<PacketProcessor> logger)
     {
         _logger = logger;
         _subject = new();
-        _connectable = _subject.ObserveOn(Scheduler.Default).Publish();
     }
 
+    /// <inheritdoc />
     public void ProcessPacket(byte[] data)
     {
         var reader = new BinaryReader(new MemoryStream(data));
@@ -35,7 +39,11 @@ public class PacketProcessor : IPacketProcessor, IPacketObservable
                 HandleMotionData(reader, header);
                 break;
             case (sbyte)PacketId.Session:
+                HandleSessionData(reader, header);
+                break;
             case (sbyte)PacketId.LapData:
+                HandleLapData(reader, header);
+                break;
             case (sbyte)PacketId.Event:
             case (sbyte)PacketId.Participants:
             case (sbyte)PacketId.CarSetups:
@@ -57,8 +65,8 @@ public class PacketProcessor : IPacketProcessor, IPacketObservable
     {
         try
         {
-            var motionData = reader.GetPacketMotionData(header);
-            _subject.OnNext(motionData);
+            var data = reader.GetPacketMotionData(header);
+            _subject.OnNext(data);
         }
         catch (PacketException ex)
         {
@@ -66,8 +74,35 @@ public class PacketProcessor : IPacketProcessor, IPacketObservable
         }
     }
 
-    public IObservable<T> Observe<T>()
+    private void HandleSessionData(BinaryReader reader, PacketHeader header)
     {
-        return _connectable.OfType<T>();
+        try
+        {
+            var data = reader.GetPacketSessionData(header);
+            _subject.OnNext(data);
+        }
+        catch (PacketException ex)
+        {
+            _logger.LogError(ex, "Handling of session data failed");
+        }
+    }
+
+    private void HandleLapData(BinaryReader reader, PacketHeader header)
+    {
+        try
+        {
+            var data = reader.GetPacketLapData(header);
+            _subject.OnNext(data);
+        }
+        catch (PacketException ex)
+        {
+            _logger.LogError(ex, "Handling of lap data failed");
+        }
+    }
+
+    /// <inheritdoc />
+    public IObservable<T> Observe<T>() where T : IPacket
+    {
+        return _subject.OfType<T>();
     }
 }
